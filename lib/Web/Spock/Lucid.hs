@@ -1,4 +1,5 @@
 {-# LANGUAGE
+CPP,
 OverloadedStrings,
 RankNTypes
   #-}
@@ -17,6 +18,10 @@ import Control.Monad.IO.Class
 import Web.Spock
 import Lucid.Base
 import Blaze.ByteString.Builder
+
+#if !MIN_VERSION_base(4,8,0)
+import Data.Monoid (mempty)
+#endif
 
 
 -- | Render HTML and send as response body. Content-type will be @text/html@.
