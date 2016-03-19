@@ -1,5 +1,5 @@
 name:                Spock-lucid
-version:             0.1.0.0
+version:             0.2.0.0
 synopsis:            Lucid support for Spock
 description:
   Lucid support for Spock
@@ -26,6 +26,7 @@ library
   -- other-extensions:    
   build-depends:       Spock >= 0.9
                      , base >= 4.7 && < 4.10
+                     , blaze-builder
                      , lucid == 2.*
                      , transformers
   ghc-options:         -Wall -fno-warn-unused-do-bind
