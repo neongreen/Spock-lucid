@@ -9,12 +9,14 @@ module Web.Spock.Lucid
 (
   lucid,
   lucidIO,
+  lucidT,
 )
 where
 
 
 import Data.Functor.Identity
 import Control.Monad.IO.Class
+import Control.Monad.Trans.Class
 import Web.Spock
 import Lucid.Base
 import Blaze.ByteString.Builder
@@ -42,3 +44,12 @@ lucidIO x = do
   return a
 {-# INLINE lucidIO #-}
 
+-- | Like 'lucid', but for arbitrary monads. Might require some additional
+-- boilerplate.
+lucidT :: MonadIO m => HtmlT m a -> ActionCtxT cxt m a
+lucidT x = do
+  setHeader "Content-Type" "text/html; charset=utf-8"
+  (render, a) <- lift (runHtmlT x)
+  lazyBytes (toLazyByteString (render mempty))
+  return a
+{-# INLINE lucidT #-}
