@@ -7,9 +7,9 @@ RankNTypes
 
 module Web.Spock.Lucid
 (
-  lucid,
-  lucidIO,
-  lucidT,
+  lucid, lucid',
+  lucidIO, lucidIO',
+  lucidT, lucidT'
 )
 where
 
@@ -35,6 +35,14 @@ lucid x = do
   return a
 {-# INLINE lucid #-}
 
+-- | Like 'lucid', but discards the value of the 'Html'.
+lucid' :: MonadIO m => Html a -> ActionCtxT cxt m b
+lucid' x = do
+  setHeader "Content-Type" "text/html; charset=utf-8"
+  let Identity (render, _) = runHtmlT x
+  lazyBytes (toLazyByteString (render mempty))
+{-# INLINE lucid' #-}
+
 -- | Like 'lucid', but for @HtmlT IO@.
 lucidIO :: MonadIO m => HtmlT IO a -> ActionCtxT cxt m a
 lucidIO x = do
@@ -43,6 +51,14 @@ lucidIO x = do
   lazyBytes (toLazyByteString (render mempty))
   return a
 {-# INLINE lucidIO #-}
+
+-- | Like 'lucidIO', but discards the value of the 'Html'.
+lucidIO' :: MonadIO m => HtmlT IO a -> ActionCtxT cxt m b
+lucidIO' x = do
+  setHeader "Content-Type" "text/html; charset=utf-8"
+  (render, _) <- liftIO (runHtmlT x)
+  lazyBytes (toLazyByteString (render mempty))
+{-# INLINE lucidIO' #-}
 
 -- | Like 'lucid', but for arbitrary monads. Might require some additional
 -- boilerplate.
@@ -53,3 +69,11 @@ lucidT x = do
   lazyBytes (toLazyByteString (render mempty))
   return a
 {-# INLINE lucidT #-}
+
+-- | Like 'lucidT', but discards the value of the 'Html'.
+lucidT' :: MonadIO m => HtmlT m a -> ActionCtxT cxt m b
+lucidT' x = do
+  setHeader "Content-Type" "text/html; charset=utf-8"
+  (render, _) <- lift (runHtmlT x)
+  lazyBytes (toLazyByteString (render mempty))
+{-# INLINE lucidT' #-}
