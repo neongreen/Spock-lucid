@@ -27,29 +27,26 @@ import Data.Monoid (mempty)
 
 
 -- | Render HTML and send as response body. Content-type will be @text/html@.
-lucid :: MonadIO m => Html a -> ActionCtxT cxt m a
+lucid :: MonadIO m => Html a -> ActionCtxT cxt m b
 lucid x = do
   setHeader "Content-Type" "text/html; charset=utf-8"
-  let Identity (render, a) = runHtmlT x
+  let Identity (render, _) = runHtmlT x
   lazyBytes (toLazyByteString (render mempty))
-  return a
 {-# INLINE lucid #-}
 
 -- | Like 'lucid', but for @HtmlT IO@.
-lucidIO :: MonadIO m => HtmlT IO a -> ActionCtxT cxt m a
+lucidIO :: MonadIO m => HtmlT IO a -> ActionCtxT cxt m b
 lucidIO x = do
   setHeader "Content-Type" "text/html; charset=utf-8"
-  (render, a) <- liftIO (runHtmlT x)
+  (render, _) <- liftIO (runHtmlT x)
   lazyBytes (toLazyByteString (render mempty))
-  return a
 {-# INLINE lucidIO #-}
 
 -- | Like 'lucid', but for arbitrary monads. Might require some additional
 -- boilerplate.
-lucidT :: MonadIO m => HtmlT m a -> ActionCtxT cxt m a
+lucidT :: MonadIO m => HtmlT m a -> ActionCtxT cxt m b
 lucidT x = do
   setHeader "Content-Type" "text/html; charset=utf-8"
-  (render, a) <- lift (runHtmlT x)
+  (render, _) <- lift (runHtmlT x)
   lazyBytes (toLazyByteString (render mempty))
-  return a
 {-# INLINE lucidT #-}
