@@ -1,3 +1,8 @@
+# 0.4.0.1
+
+* Fixed a compiler warning.
+* Bumped dependencies.
+
 # 0.4.0.0
 
 * Generalized all types by not returning the value (since it can't be used anyway).
