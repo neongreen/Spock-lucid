@@ -11,7 +11,6 @@ module Web.Spock.Lucid
 where
 
 
-import Data.Functor.Identity
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Class
 import Web.Spock
